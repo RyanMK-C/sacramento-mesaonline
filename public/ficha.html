@@ -1,75 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ficha</title>
-<script src="/socket.io/socket.io.js"></script>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/ficha.css">
 </head>
 
 <body>
 
-<h2 id="nome"></h2>
+<div class="sheet">
 
-Vida:
-<input id="vida" type="number">
+<div class="nome">
+<label>Nome</label>
+<input id="nome">
+</div>
 
-Dor:
-<input id="dor" type="number">
+<div class="atributos">
 
-Defesa:
-<input id="defesa" type="number">
-
-Velocidade:
+<div class="attr">
+<label>Velocidade</label>
 <input id="velocidade" type="number">
+</div>
 
-Coragem:
+<div class="attr">
+<label>Coragem</label>
 <input id="coragem" type="number">
+</div>
 
-Intelecto:
+<div class="attr">
+<label>Intelecto</label>
 <input id="intelecto" type="number">
+</div>
 
-Fisico:
+<div class="attr">
+<label>Físico</label>
 <input id="fisico" type="number">
+</div>
 
-<button onclick="salvar()">Salvar</button>
+</div>
 
-<script>
+<div class="vida">
+<label>Vida</label>
+<div class="circulos" id="vida"></div>
+</div>
 
-const socket = io()
+<div class="dor">
+<label>Dor</label>
+<div class="circulos" id="dor"></div>
+</div>
 
-const params = new URLSearchParams(window.location.search)
-const player = params.get("player")
+<div class="habilidades">
 
-document.getElementById("nome").innerText = player
+<div class="skill"><label>Tensão</label><input id="tensao"></div>
+<div class="skill"><label>Medicina</label><input id="medicina"></div>
+<div class="skill"><label>Montaria</label><input id="montaria"></div>
+<div class="skill"><label>Tradição</label><input id="tradicao"></div>
+<div class="skill"><label>Violência</label><input id="violencia"></div>
+<div class="skill"><label>Negócios</label><input id="negocios"></div>
+<div class="skill"><label>Roubo</label><input id="roubo"></div>
+<div class="skill"><label>Suor</label><input id="suor"></div>
 
-function salvar(){
+</div>
 
-const data = {
-id: player,
-vida: document.getElementById("vida").value,
-dor: document.getElementById("dor").value,
-defesa: document.getElementById("defesa").value,
-velocidade: document.getElementById("velocidade").value,
-coragem: document.getElementById("coragem").value,
-intelecto: document.getElementById("intelecto").value,
-fisico: document.getElementById("fisico").value
-}
+<div class="botoes">
 
-socket.emit("updateFicha", data)
+<button id="exportar">Exportar</button>
+<input type="file" id="importar">
 
-}
+</div>
 
-socket.on("fichaAtualizada", data => {
+</div>
 
-if(data.id === player){
-
-document.getElementById("vida").value = data.vida
-document.getElementById("dor").value = data.dor
-
-}
-
-})
-
-</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/ficha.js"></script>
 
 </body>
 </html>
