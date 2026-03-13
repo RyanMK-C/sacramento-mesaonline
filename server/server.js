@@ -1,6 +1,7 @@
-const express = require("express")
-const http = require("http")
-const { Server } = require("socket.io")
+import express from "express"
+import http from "http"
+import { Server } from "socket.io"
+import fs from "fs"
 
 const app = express()
 const server = http.createServer(app)
@@ -11,31 +12,57 @@ app.use(express.static("public"))
 let fichas = {}
 let locked = false
 
+if (fs.existsSync("fichas.json")) {
+ fichas = JSON.parse(fs.readFileSync("fichas.json"))
+}
+
+function salvar(){
+ fs.writeFileSync("fichas.json", JSON.stringify(fichas,null,2))
+}
+
 io.on("connection", socket => {
 
-  socket.on("updateFicha", data => {
-    if (locked) return
+ socket.emit("lista", Object.values(fichas))
+ socket.emit("lock", locked)
 
-    fichas[data.id] = data
-    io.emit("fichaAtualizada", data)
-  })
+ socket.on("criar", data => {
 
-  socket.on("lockSheets", () => {
-    locked = true
-    io.emit("locked", true)
-  })
+  const id = Date.now().toString()
 
-  socket.on("unlockSheets", () => {
-    locked = false
-    io.emit("locked", false)
-  })
+  fichas[id] = {
+   id,
+   jogador:data.jogador,
+   personagem:data.personagem,
+   dados:{}
+  }
 
-  socket.on("getFichas", () => {
-    socket.emit("allFichas", fichas)
-  })
+  salvar()
+
+  io.emit("lista", Object.values(fichas))
+ })
+
+ socket.on("pedir-ficha", id => {
+  socket.emit("ficha", fichas[id])
+ })
+
+ socket.on("update", ({id,dados}) => {
+
+  if(locked) return
+
+  fichas[id].dados = dados
+
+  salvar()
+
+  io.emit("ficha-update",{id,dados})
+ })
+
+ socket.on("lock", v => {
+  locked = v
+  io.emit("lock",v)
+ })
 
 })
 
-server.listen(3000, () => {
-  console.log("Servidor rodando")
+server.listen(process.env.PORT || 3000, ()=>{
+ console.log("Servidor rodando")
 })
