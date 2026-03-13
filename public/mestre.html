@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Escudo do Mestre</title>
+<script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+
+<h1>Escudo do Mestre</h1>
+
+<div id="lista"></div>
+
+<button onclick="lock()">Travar fichas</button>
+<button onclick="unlock()">Liberar fichas</button>
+
+<script>
+
+const socket = io()
+
+const lista = document.getElementById("lista")
+
+socket.emit("getFichas")
+
+socket.on("allFichas", fichas => {
+
+render(fichas)
+
+})
+
+socket.on("fichaAtualizada", ficha => {
+
+const el = document.getElementById(ficha.id)
+
+if(el){
+
+el.innerHTML = `
+${ficha.id}
+HP: ${ficha.vida}
+Dor: ${ficha.dor}
+Defesa: ${ficha.defesa}
+`
+
+}
+
+})
+
+function render(fichas){
+
+lista.innerHTML=""
+
+for(const id in fichas){
+
+const f = fichas[id]
+
+const div = document.createElement("div")
+div.id = id
+
+div.innerHTML = `
+<h3>${id}</h3>
+HP: ${f.vida}<br>
+Dor: ${f.dor}<br>
+Defesa: ${f.defesa}
+`
+
+lista.appendChild(div)
+
+}
+
+}
+
+function lock(){
+socket.emit("lockSheets")
+}
+
+function unlock(){
+socket.emit("unlockSheets")
+}
+
+</script>
+
+</body>
+</html>

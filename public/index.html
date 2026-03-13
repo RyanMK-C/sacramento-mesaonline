@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mesa RPG</title>
+</head>
+
+<body>
+
+<h1>Mesa Sacramento RPG</h1>
+
+<div id="players"></div>
+
+<button onclick="window.location='mestre.html'">
+Entrar como Mestre
+</button>
+
+<script>
+
+const players = ["Arthur","Luna","Kael"]
+
+const container = document.getElementById("players")
+
+players.forEach(p => {
+
+const div = document.createElement("div")
+
+div.innerHTML = `
+<button onclick="openFicha('${p}')">
+${p}
+</button>
+`
+
+container.appendChild(div)
+
+})
+
+function openFicha(nome){
+window.location = "ficha.html?player=" + nome
+}
+
+</script>
+
+</body>
+</html>
